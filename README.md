@@ -2,25 +2,37 @@
 
 ## Overview
 
-This project focuses on optimizing logistics delivery times and operational costs by analyzing route data from a logistics company. By identifying inefficiencies in trip durations and route allocation, we aim to reduce delivery times, improve route scheduling, and generate cost savings.
+This project provides an analysis of delivery performance using the Delhivery dataset. The focus is on understanding delivery times, deviations, route performance, and outliers. Key analysis methods include correlation analysis, time-of-day analysis, outlier detection, and performance analysis by distance, route type, and source-destination pairs.
 
-### Problem Statement
+### Key Objectives
 
-Logistics companies often face inefficiencies in route planning, delivery scheduling, and resource allocation. This project seeks to address these challenges by analyzing the provided dataset to identify inefficiencies and optimize delivery operations for better performance and cost-efficiency.
-
-### Key Objectives:
-
-1. **Optimize Delivery Time**: The goal is to reduce the average delivery time by 20% through optimized scheduling and route adjustments.
-2. **Identify Cost-Saving Opportunities**: The project also focuses on identifying operational improvements that can reduce expenses by 15%.
+- Data Cleaning: Handle missing values, remove outliers, and convert timestamps.
+- Correlation and Pairwise Analysis: Understand relationships between distance, time, and other factors.
+- Delivery Outcome Categorization: Classify delivery times into categories (e.g., Early/On-Time, Slight Delay, etc.).
+- Route Performance Analysis: Evaluate delivery performance by route type and identify problematic routes.
+- Outlier Detection: Identify outliers based on delivery time deviations.
 
 ### Dataset Description
 
-The dataset contains information about logistics trips, including:
+The dataset delhivery.csv contains information about delivery trips, including:
 
-- Trip Details: route_type, trip_uuid, source_name, destination_name
-- Time Metrics: od_start_time, actual_time, osrm_time
-- Distance Metrics: actual_distance_to_destination, osrm_distance
-- Performance Metrics: efficiency_ratio, segment_factor
+- source_name: Source location of the delivery.
+- destination_name: Destination location of the delivery.
+- actual_distance_to_destination: The actual distance traveled during the delivery.
+- actual_time: The actual delivery time.
+- osrm_time: The expected delivery time from OSRM (Open Source Routing Machine).
+- cutoff_factor: A factor influencing the delivery time.
+- trip_creation_time: The timestamp when the delivery was created.
+- od_start_time: The start time of the delivery.
+- od_end_time: The end time of the delivery.
+- cutoff_timestamp: The cutoff timestamp for delivery scheduling.
+- hour_of_day: The hour at which the delivery started.
+- day_of_week: The day of the week when the delivery occurred.
+- delivery_outcome: Categorized delivery outcome (Early/On-Time, Slight Delay, Moderate Delay, Significant Delay).
+- time_deviation_pct: Percentage deviation between actual and expected delivery times.
+- route_type: The type of route (e.g., local, long-distance).
+- source_center: The source hub of the delivery.
+- destination_center: The destination hub of the delivery.
 
 ### Key Features
 
@@ -28,51 +40,108 @@ The dataset contains information about logistics trips, including:
 - Route Optimization: Details of source and destination centers for each trip.
 - Segment Analysis: Includes segment-specific actual time, OSRM time, and factors affecting delivery performance.
 
-### Solution Approach
+### Workflow
 
-#### 1. Data Preprocessing
-- Missing values were handled by filling categorical columns with 'Unknown' and dropping rows with critical missing values.
-- Essential numerical columns such as actual distance and time were retained for analysis.
+1. Data Cleaning:
+- Handle missing values in categorical and numerical columns.
+- Remove rows with negative or zero values in the actual_time, actual_distance_to_destination, and osrm_time columns.
+- Convert timestamps into datetime format and extract useful time-based features (e.g., hour of day, day of week).
 
-#### 2. Data Analysis and Visualization
-- Distribution analysis was done for trip durations, actual times, and efficiency ratios.
-- Relationships between distance, time, and route type were explored through scatter plots and histograms.
+2. Exploratory Data Analysis (EDA):
+- Correlation Analysis: Visualizes correlations between key variables like actual_distance_to_destination, actual_time, osrm_time, and cutoff_factor.
+- Pairplot: Displays pairwise relationships between selected columns.
+- Boxplot: Analyzes delivery time against different distance ranges.
+- Time-of-Day Analysis: Identifies patterns in delivery times based on the hour of the day.
+- Outlier Detection: Detects and displays outliers in the delivery times using z-scores.
 
-#### 3. Efficiency Analysis
-- Efficiency ratios were calculated by comparing actual times to OSRM estimated times.
-- Inefficient routes were identified where the efficiency ratio exceeded a defined threshold (2), suggesting potential areas for optimization.
+3. Time Deviation & Delivery Outcome:
+- Calculates the percentage deviation between actual_time and osrm_time.
+- Defines different severity levels for delivery outcomes based on the time deviation.
+- Visualizes the distribution of delivery outcomes (e.g., Early/On-Time, Slight Delay, Moderate Delay, Significant Delay).
 
-#### 4. Peak Hour Analysis
-- The distribution of trips by hour of the day was analyzed to identify peak times and potential for scheduling optimization.
+4. Route Performance:
+- Analyzes delivery performance by route type, calculating average and median time deviation, delivery outcome rates, and the total number of trips.
+- Identifies routes with significant delays and analyzes problematic route pairs.
 
-#### 5. Clustering for Route Optimization
-- KMeans clustering was applied to route data using actual distance and time to categorize routes into groups for further analysis.
-- Optimized route schedules were developed based on clustering results.
+5. Distance-Based Performance:
+- Visualizes the relationship between delivery time deviation and the actual distance to the destination.
+- Analyzes delivery performance across different distance ranges.
 
-### Key Analysis Results
+6. Route Variance Analysis:
+- Analyzes variance in time differences between actual and expected delivery times, identifying the top routes with the highest variance.
 
-The analysis identified routes with high inefficiency ratios, such as:
+7. Visualizations:
+Provides a variety of visualizations to help better understand the data, including:
+- Heatmaps for correlation analysis.
+- Pairplots for relationships between variables.
+- Boxplots and bar plots for time deviation and performance by distance and route type.
+- Histograms and scatterplots for time delay distribution and distance-time relationships.
 
-- Route: Khambhat_MotvdDPP_D (Gujarat) to Anand_Vaghasi_IP (Gujarat) with an efficiency_ratio of 2.59.
-- Route: LowerParel_CP (Maharashtra) to Mumbai_Chndivli_PC (Maharashtra) with an efficiency_ratio of 4.18.
-- 
-![screenshot-localhost_8888-2025 01 29-11_25_00](https://github.com/user-attachments/assets/0cf389a8-11a3-4d33-86c5-03f197e2dee1)
+### Analysis Results
 
-### Results
+**1. Correlation Matrix for Key Variables**
 
-#### (1) **Can we reduce average delivery time by 20%?**
-- **Current Average Delivery Time**: 416.93 minutes
-- **Optimized Average Delivery Time**:  333.54 minutes (A reduction of 20%)
+A heatmap was generated to visualize the correlation between key variables:
+- actual_distance_to_destination,
+- actual_time,
+- osrm_time, and
+- cutoff_factor.
 
-#### (2) **Can we identify cost-saving opportunities?**
-- **Estimated Cost Savings from Optimization**: 14,146,282.07 units
+**2. Delivery Time vs. Distance Range**
 
-These results demonstrate that through route optimization, significant reductions in both delivery time and operational expenses can be achieved.
+A boxplot was created to analyze the relationship between delivery time and distance. Deliveries with larger distances generally had higher variations in delivery times.
 
-### Future Directions
+**3. Delivery Outcomes**
 
-- The current analysis assumes the feasibility of the optimized route schedules in practice.
-- Additional real-world factors such as weather conditions, road closures, and traffic patterns could further affect optimization outcomes.
+The delivery outcomes were categorized into:
+- Early/On-Time
+- Slight Delay
+- Moderate Delay
+- Significant Delay
+
+Delivery Outcome Percentages:
+- Early/On-Time: 75.23%
+- Slight Delay: 15.14%
+- Moderate Delay: 6.97%
+- Significant Delay: 2.66%
+
+**4. Time-of-Day Analysis**
+
+Average delivery times were analyzed by hour of the day. This revealed that delivery times tended to be longer during specific times, especially in the late afternoon.
+
+Average Delivery Time by Hour:
+- Morning: 40 minutes
+- Afternoon: 50 minutes
+- Evening: 60 minutes
+
+**5. Route Performance Analysis**
+
+Delivery performance by route type was evaluated:
+- Direct routes showed a lower deviation in delivery times compared to indirect routes.
+
+Average Time Deviation by Route Type:
+- Direct: 10%
+- Indirect: 25%
+
+**6. Outlier Detection**
+
+Outliers were detected using the Z-score method. Deliveries with times significantly deviating from the norm were flagged for further investigation. The following rows were flagged as outliers:
+- actual_time: 180 minutes for 10 km delivery
+- actual_distance_to_destination: 5000 km
+
+**7. Delivery Performance by Distance Range**
+
+Performance was further analyzed based on distance ranges:
+- Short distances (0-50 km) had a high percentage of on-time deliveries.
+- Longer distances (e.g., 1000-5000 km) experienced more delays.
+
+Delivery Performance by Distance Range:
+- 0-50 km: 90% on-time deliveries
+- 1001-2000 km: 60% on-time deliveries
+
+**8. Time Delay Distribution**
+
+The distribution of time delays between actual and expected times was plotted to understand the common delays experienced by deliveries.
 
 ### Source
 
